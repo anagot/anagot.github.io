@@ -1,7 +1,7 @@
 ---
 title: udon
 tag: udon
-permalink: "/category/vrchat"
+permalink: "/category/udon"
 categories: category
 ---
 
