@@ -1,0 +1,4 @@
+# main menu
+main:
+  - title: "カテゴリー"
+    url  : /category/

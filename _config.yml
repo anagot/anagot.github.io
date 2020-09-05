@@ -31,9 +31,20 @@ theme: minima
 plugins:
   - jekyll-feed
 
-collections :
-  VRChat:
+collections:
+  category:
     output: true
+
+defaults:
+  -
+    scope:
+      path: ""
+      type: category
+    values:
+      layout: "category"
+
+search: true
+search_full_content: true
 
 # Exclude from processing.
 # The following items will not be processed, by default. Create a custom list
