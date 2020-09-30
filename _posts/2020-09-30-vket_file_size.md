@@ -68,7 +68,7 @@ PNGファイルでもまだ大きいのであればJPEG化も手だが画質の�
 その手のWEBサービスの中には画像のアップロードが必要となるものともあるため利用規約との兼ね合いに気を付ける事。
 
 手軽にできるものであればGoogleの開発した[squoosh](https://squoosh.app/)(ブラウザで利用するが画像の圧縮はローカルで動作する)
-手間がかかってもいいからPNGの圧縮率を重視したいのであれば[opt_image](https://github.com/mixsoda/opt_image)(導入が若干面倒ですが)
+手間がかかってもいいからPNGの圧縮率を重視したいのであれば[opt_image](https://github.com/mixsoda/opt_image)
 
 参考としてopt_imageでSubstancePainterで作成した3.07MBのPNGファイルが907KBになった。
 パッと見では画質に変化は感じない。
