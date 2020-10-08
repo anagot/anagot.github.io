@@ -45,6 +45,8 @@ FBXに変換します。対象の統合されたメッシュを右クリック�
 
 （仮に後で作成したFBXをblanederでいじりたいのであればExport FormatをBinaryに変更すること）
 
+（シェイプキーを維持したい時はAnimated Skinned Meshにチェックを入れる？※未確認）
+
 ![image-20201008231747937](/images/bake.assets/image-20201008231747937.png)
 
 
