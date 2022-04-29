@@ -49,10 +49,12 @@ VRC Phys Bone (Script)コンポーネントの下の方にあるOptionsのParame
 <img src="/images/PhysBones_memo.assets/pb_parameter.jpg"  />
 
 アバターのExpression parametersに上記パラメーターのうち使いたいものを追加します。型を合わせるよう気を付けてください。
+画像では"megane_IsGrabbed"を追加しています。
 
 <img src="/images/PhysBones_memo.assets/ex_parameter.jpg"  />
 
 アバターのFXレイヤーのAnimator ControllerのParametersにも同様に追加します。
+画像では"megane_IsGrabbed"を追加しています。
 
 <img src="/images/PhysBones_memo.assets/animator.jpg"  />
 
