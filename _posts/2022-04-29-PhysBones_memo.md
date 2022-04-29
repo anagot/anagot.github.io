@@ -1,0 +1,447 @@
+---
+layout: post
+title:  "Udonメモ"
+date:   2020-09-04 16:50:26 +0900
+categories: vrchat udon
+---
+
+
+
+# Udonメモ
+
+<!--ts-->
+
+   * [Udonメモ](#udonメモ)
+      * [操作](#操作)
+      * [自分がよく使うノード](#自分がよく使うノード)
+         * [Variables(変数)関連](#variables変数関連)
+            * [Get variable/Set variable](#get-variableset-variable)
+            * [Get Program Variable/Set Program Variable](#get-program-variableset-program-variable)
+         * [Events関連](#events関連)
+            * [Start](#start)
+            * [Update](#update)
+            * [LateUpdate](#lateupdate)
+            * [FixedUpdate](#fixedupdate)
+            * [Interact](#interact)
+            * [On～系](#on系)
+            * [Event Custom](#event-custom)
+         * [フロー制御](#フロー制御)
+            * [Block](#block)
+            * [Branch](#branch)
+            * [For](#for)
+            * [While](#while)
+         * [演算関連](#演算関連)
+            * [Const～系](#const系)
+            * [Addition](#addition)
+            * [Subtraction](#subtraction)
+            * [Multiplication](#multiplication)
+            * [Division](#division)
+            * [Equality](#equality)
+            * [Inequality](#inequality)
+            * [Greaterthan～ / Lessthan～](#greaterthan--lessthan)
+            * [UnaryNegation](#unarynegation)
+         * [DateTime](#datetime)
+            * [get Now / get UtcNow](#get-now--get-utcnow)
+            * [その他のget～系](#その他のget系)
+         * [GameObject](#gameobject)
+            * [get activSelf](#get-activself)
+            * [SetActive](#setactive)
+         * [Transform](#transform)
+            * [Rotate](#rotate)
+         * [その他](#その他)
+      * [サンプル](#サンプル)
+         * [1秒カウンター](#1秒カウンター)
+         * [BGM音量スライダー](#bgm音量スライダー)
+
+<!-- Added by: anagot, at: Thu Sep  3 19:40:31 JST 2020 -->
+
+<!--te-->
+
+## 操作
+
+スペースキーでノードのクイックサーチ、Tabキーでフルサーチ
+基本的にクイックサーチでOK
+
+選択ノードをCtrl+Dで複製
+
+右クリックメニューでコメント入れられるけど日本語入力するときはコピペじゃないと入らない
+
+
+
+## 自分がよく使うノード
+
+雑な認識で解説
+
+### Variables(変数)関連
+
+変数。通常グラフの左上にあるVariablesウインドウにて追加を行う。
+int. float. bool, stringなどの型だけでなく、GameObjectやAudioSource、Animatorなどの各種コンポーネントも指定できる。
+
+<img src="/images/udon.assets/image-20200901134359179.png" alt="image-20200901134359179"  />
+
+変数の左の’>’をクリックするとpublicとsyncdの設定が可能。
+publicにチェックを入れると変数を外部から設定できるようになり、syncdにチェックを入れると他プレイヤーと変数を同期するようになるらしい。(同期周りは闇が深そうなので手を出していない。)
+
+<img src="/images/udon.assets/image-20200901134713914.png" alt="image-20200901134713914"  />
+
+publicにチェックを入れた変数はUdon Behaviourから変数を指定できるようになるので
+汎用的に複数個所で使いまわすタイプのグラフを作るときはpublicのチェックを入れておくと便利
+
+<img src="/images/udon.assets/image-20200901135908099.png" alt="image-20200901135908099"  />
+
+#### Get variable/Set variable
+
+Variablesウインドウから変数をD＆Dすると変数の値を他のノードに与えるためのノードであるGet variableを設置できる(画像左)。設置時に左Ctrlを押すと逆に他のノードから変数に値を代入するノードであるSet variableを設置できる(画像右)。現状***2020.08.07.18.18_Public***ではGet variableを直接Get variableに繋ぐと正常に代入できないバグが存在していると思われる(1敗)。
+
+<img src="/images/udon.assets/image-20200901141603154.png" alt="image-20200901141603154"  />
+
+
+
+#### Get Program Variable/Set Program Variable
+
+Udon Behaviorカテゴリに存在するノード
+
+他のUdonの変数を持ってきたり他のUdonに変数を代入できる。
+対象の変数にはpublicにチェックが入っている必要がある。
+instanceに対象のUdon Behaviorを繋ぎ、Symbolnameに使用する変数名を入力する。
+
+<img src="/images/udon.assets/image-20200901151809022.png" alt="image-20200901151809022"  />
+
+
+
+------
+
+
+
+### Events関連
+
+フローの起点となるノード
+
+VRCSDK2におけるVRC Triggerを置き換える存在
+
+基本的にEventsカテゴリに入っている。
+
+1つのUdonグラフに複数のEventを入れることも可能。
+実行順には気をつけること。
+
+
+
+#### Start
+
+ワールドの初回ロード後に実行される。
+~~これ2人目以降のJoinってその人に対してStart実行されるのかってところがいまいちわかってないので要検証~~
+＞実行されるっぽい。
+
+
+
+#### Update
+
+毎フレーム実行される。
+リアルタイムで実行する必要がある系のスクリプトで使う。
+
+処理落ちでFPSが落ちるとその分時間当たりの実行回数も減る。
+
+
+
+#### LateUpdate
+
+毎フレーム実行される。
+Updateとの違いは実行がUpdateよりも後になる点
+
+Updateで行った計算結果をLateUpdateで処理したりとかするのに便利そう。
+
+
+
+#### FixedUpdate
+
+一定時間ごとに実行。デフォルトでは0.02秒ごと
+実行間隔はUnityの　*Edit*→*Project Settings*→*Time*　に設定あり
+物理演算の判定とかにも関わってる？ようなのでデフォ値から動かす時は要注意っぽい。
+
+リアルタイム性は欲しいけど毎フレーム実行は不要なときはこっち使えばいいのかな。
+
+処理落ちでFPSが落ちてても実行間隔を維持しようとするっぽい。
+
+
+
+#### Interact
+
+インタラクト時(手を近づけて実行するボタン系のやつ)に実行。
+
+SDK2のVRC TriggerのOnInteractに相当
+
+Interact時にテキストをデフォルトのUseから変えたい時や有効範囲(Proximity)を変えたい時は、Inspectorの表示をDebugに変更するとUdon Behaviour上で変更ができるようになる。
+
+
+
+#### On～系
+
+SDK2のVRC TriggerのOn～に相当
+
+
+
+#### Event Custom
+
+なぜかこいつだけEventsじゃなくてSpecialのカテゴリに入ってる。わかりづらい。
+SDK2のVRC TriggerのCustomに相当
+
+テキストボックスにイベント名を入れておき、別コンポーネントから実行できる。
+
+こいつに限らずサーチ欄のノード名と実際のノード名が微妙に違うのが多いのでちょっと困る。
+
+<img src="/images/udon.assets/image-20200831131950225.png" alt="image-20200831131950225"  />
+
+------
+
+
+
+### フロー制御
+
+フロー制御系のノードはすべてSpecialカテゴリに入っている
+
+
+
+#### Block
+
+フローを分割する。右側に分割したフローは上から順に処理されてるらしい。
+
+<img src="/images/udon.assets/image-20200831132949292.png" alt="image-20200831132949292"  />
+
+
+
+#### Branch
+
+if文に相当するやつ。bool値を持ったノードを繋いで結果から流れるフローを分ける。
+というか名称ifで良かっただろこれ。
+
+<img src="/images/udon.assets/image-20200831135143235.png" alt="image-20200831135143235"  />
+
+
+
+#### For
+
+For文に相当するやつ。start値からend値になるまでbodyに繋いだフローを繰り返し、終わったらExitに繋いだフローに流れる。
+
+<img src="/images/udon.assets/image-20200831140750455.png" alt="image-20200831140750455"  />
+
+#### While
+
+while文に相当するやつ。繋いだboolがTrueの間はBodyに繋いだフローを繰り返し実行する。
+FalseになったらExitに繋いだフローに流れる。
+
+<img src="/images/udon.assets/image-20200831141248115.png" alt="image-20200831141248115"  />
+
+------
+
+
+
+### 演算関連
+
++とか/とか*とかで検索できないのでわかりづらい。
+
+Udonのバージョンによってmodulo(剰余演算)ノードがあったりなかったりするらしい。
+現状***2020.08.07.18.18_Public***には入ってないので奇数・偶数判定がちょっとめんどい
+
+
+
+#### Const～系
+
+定数。計算関連はSystemカテゴリに入っている。
+特定のコンポーネントの専用定数みたいなやつはUnityEngineカテゴリに入っているけどそっちはよくわからない。
+
+<img src="/images/udon.assets/image-20200901155506640.png" alt="image-20200901155506640"  />
+
+
+
+#### Addition
+
+加算　+
+
+<img src="/images/udon.assets/image-20200901161437987.png" alt="image-20200901161437987"  />
+
+#### Subtraction
+
+減算　-
+上の数値から下を引く
+
+<img src="/images/udon.assets/image-20200901161553582.png" alt="image-20200901161553582"  />
+
+
+
+#### Multiplication
+
+乗算　*
+
+![image-20200901162051416](/images/udon.assets/image-20200901162051416.png)
+
+
+
+#### Division
+
+除算　/
+上の数字÷下の数字
+
+![image-20200901162302844](/images/udon.assets/image-20200901162302844.png)
+
+
+
+#### Equality
+
+2つの値が同じだったらtrue、違えばFalse　==
+
+Equalsというノードもあってなんか厳密には違うっぽいんだけど違いが良く分かってない。
+
+![image-20200901163832239](/images/udon.assets/image-20200901163832239.png)
+
+
+
+#### Inequality
+
+2つの値が別だったらtrue、同じだったらFalse　！=
+
+![image-20200901164136206](/images/udon.assets/image-20200901164136206.png)
+
+
+
+#### Greaterthan～ / Lessthan～
+
+大なりとか小なりとか。上than下で判定　><≧≦
+
+![image-20200901164416181](/images/udon.assets/image-20200901164416181.png)
+
+
+
+#### UnaryNegation
+
+booleanのTrueとFalseを反転させるノード。
+
+ミラーのトグルスイッチとか作るときに超便利。
+
+![image-20200902180839435](/images/udon.assets/image-20200902180839435.png)
+
+
+
+------
+
+
+
+### DateTime
+
+Systemカテゴリに入っている。
+
+個人的にSDK3になってうれしいポイントの代表格。PCのシステム時間が取得できる。
+SDK2時代に同じことをする場合VRC_panoramaで専用の外部サーバーから日時が色情報に変換された画像を取得してそれをシェーダーでデコードするようなかなり面倒な方法を使って実装していることが多かったようだ。
+
+
+
+#### get Now / get UtcNow
+
+現在のPCのシステム時間を取得する。
+get UtcNowの方は協定世界時で取得してくれます。
+
+<img src="/images/udon.assets/image-20200901171812120.png" alt="image-20200901171812120"  />
+
+
+
+#### その他のget～系
+
+DateTime型から年とか分とか秒とかの要素を切り出してint値で取得するノード
+
+基本的には上記get Now/get UtcNowで取得した日時を利用して時計とかカレンダーとかを作るときに使う人が多いと思う。
+
+![image-20200901173204128](/images/udon.assets/image-20200901173204128.png)
+
+
+
+------
+
+
+
+### GameObject
+
+UnityEngineカテゴリに入っている。On/Offスイッチ周りしか触ってない。
+
+
+
+#### get activSelf
+
+instanceに繋いだGameObjectが有効ならTrueを、無効ならFalseを返す。
+
+![image-20200902175543997](/images/udon.assets/image-20200902175543997.png)
+
+
+
+#### SetActive
+
+instanceに繋いだGameObjectの有効、無効をvalueにセットした値に変更する。
+get activSelf→UnaryNegation→SetActiveと繋ぐだけでお手軽トグルスイッチの完成
+
+![image-20200902175831887](/images/udon.assets/image-20200902175831887.png)
+
+
+
+
+
+------
+
+
+
+### Transform
+
+UnityEngineカテゴリに入っている。
+オブジェクトの移動とか回転とか関連のノード
+自分はRotateしか触ってない。
+
+
+
+#### Rotate
+
+オブジェクトを回転させるのに使う。
+真面目にチュートリアルをやった人なら使ったはずなので多分解説不要。
+instanceにTransform型を繋ぎ、axisで回転させたい軸を指定。angleで角度を指定する。
+あくまで現在の角度に+何度するかって型式なので、特定の角度に回したいなら**set LocalRotation**ってノードがあるのでそっち使うみたいなんだけどQuaternionが良く分からなかったので触ってない。
+
+![image-20200902174119731](/images/udon.assets/image-20200902174119731.png)
+
+
+
+
+
+------
+
+
+
+### その他
+
+飽きたので気が向いたら追記
+
+
+
+## サンプル
+
+有用なサンプルがAsset/VRChat Examples以下に沢山入っているのでそれを見ろ。
+
+以下は自分がつくった謎サンプル
+
+
+
+### 1秒カウンター
+
+1秒ごとにデバッグログを出力。ついでに毎分0秒でデバッグログを出力、時計作るときのテストで作った。
+
+![image-20200901174102558](/images/udon.assets/image-20200901174102558-1599039102665.png)
+
+
+
+### BGM音量スライダー
+
+UI部品のスライダーでAudio Souceの音量を制御。時計のチャイム音量の制御用に作ったけどBGMとかにも使える。
+
+![image-20200902165541114](/images/udon.assets/image-20200902165541114-1599039097756.png)
+
+
+
+スライダー側の設定
+
+![image-20200902165644664](/images/udon.assets/image-20200902165644664.png)
+
